@@ -1,32 +1,39 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Switch } from "react-native";
+import React, { useEffect, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
 
 import Screen from "./app/components/Screen";
-import AppTextInput from "./app/components/AppTextInput";
-import AppPicker from "./app/components/AppPicker";
-
-const categories = [
-  { label: "Furniture", value: 1 },
-  { label: "Clothing", value: 2 },
-  { label: "Cameras", value: 3 },
-];
+import { Button, Image } from "react-native";
+import ImageInput from "./app/components/ImageInput";
 
 export default function App() {
-  const [isNew, setIsNew] = useState(false);
+  const [ImageURI, setImageURI] = useState();
 
-  const [category, setCategory] = useState(categories[0]);
+  const requestPermission = async () => {
+    const { granted } = await ImagePicker.requestCameraRollPermissionsAsync();
+
+    if (!granted) alert("You need to enable permission to access the library");
+  };
+
+  useEffect(async () => {
+    requestPermission();
+  }, []);
+
+  const selectImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.cancelled) setImageURI(result.uri);
+    } catch (error) {
+      console.log("Error reading an image", error);
+    }
+  };
 
   return (
     <Screen>
-      <AppPicker
-        selectedItem={category}
-        onSelectItem={(item) => setCategory(item)}
-        items={categories}
-        icon="apps"
-        placehoder="Category"
+      <ImageInput
+        onChangeImage={(uri) => setImageURI(uri)}
+        imageURI={ImageURI}
       />
-      <AppTextInput icon="email" placehoder="Email" />
     </Screen>
   );
 }
