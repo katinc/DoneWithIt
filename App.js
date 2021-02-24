@@ -1,39 +1,7 @@
-import React, { useEffect, useState } from "react";
-import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
+import React from "react";
 
-import Screen from "./app/components/Screen";
-import { Button, Image } from "react-native";
-import ImageInput from "./app/components/ImageInput";
+import ListingEditScreen from "./app/screens/ListingEditScreen";
 
 export default function App() {
-  const [ImageURI, setImageURI] = useState();
-
-  const requestPermission = async () => {
-    const { granted } = await ImagePicker.requestCameraRollPermissionsAsync();
-
-    if (!granted) alert("You need to enable permission to access the library");
-  };
-
-  useEffect(async () => {
-    requestPermission();
-  }, []);
-
-  const selectImage = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync();
-      if (!result.cancelled) setImageURI(result.uri);
-    } catch (error) {
-      console.log("Error reading an image", error);
-    }
-  };
-
-  return (
-    <Screen>
-      <ImageInput
-        onChangeImage={(uri) => setImageURI(uri)}
-        imageURI={ImageURI}
-      />
-    </Screen>
-  );
+  return <ListingEditScreen />;
 }
